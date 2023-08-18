@@ -615,7 +615,7 @@ class Model
             $this->options['fetch_sql'] = true;
         }
         // 分析表达式
-        $options = $this->_parseOptions();
+        $options = $this->_parseOptions($options);
         // 判断查询缓存
         if (isset($options['cache'])) {
             $cache = $options['cache'];

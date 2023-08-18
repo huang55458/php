@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>test</title>
+    <!-- 引入 layui.css -->
+    <link href="/static/layui2.7.6/css/layui.css" rel="stylesheet">
+    <!-- 引入 layui.js -->
+    <script src="/static/layui2.7.6/layui.js"></script>
+    <script src="/static/crypto-js.min.js"></script>
+</head>
+<body>
+<div class="layui-container">
+    <div class="layui-row">
+        <div class="layui-col-md4">
+            &nbsp;
+        </div>
+        <div class="layui-col-md5">
+            <div class="layui-row grid-demo">
+                <div class="layui-col-md12" style="height: 26vh">
+                </div>
+                <div class="layui-col-md9" >
+                    <form class="layui-form" action="/api/Home/Index/test6" method="post">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">用户名</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="name" lay-verify="title" autocomplete="off" placeholder="用户名" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">密码</label>
+                            <div class="layui-input-inline">
+                                <input type="password" name="password" lay-verify="pass" placeholder="密码" autocomplete="off" class="layui-input">
+                            </div>
+                            <div class="layui-form-mid layui-word-aux"></div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button type="submit" class="layui-btn" lay-submit="" lay-filter="demo1">登录</button>
+                                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md3">
+        </div>
+    </div>
+</div>
+<script>
+  layui.use(['form', 'util', 'laydate'], function(){
+    const form = layui.form
+    const layer = layui.layer
+    const $ = layui.jquery
+
+    //自定义验证规则
+    form.verify({
+      title: function(value){
+        if(value.length < 5){
+          return 'name至少得5个字符';
+        }
+      }
+      ,pass: [
+        /^[\S]{6,12}$/
+        ,'密码必须6到12位，且不能出现空格'
+      ]
+    });
+
+    //提交事件
+    form.on('submit(demo1)', function(data){
+      let d = {
+        name: data.field.name,
+        password: CryptoJS.MD5(data.field.password).toString(),
+      }
+      $.ajax({
+        url: '/api/Home/Index/login',
+        type: 'POST',
+        data: {req: JSON.stringify(d)},
+        dataType: 'json',
+        success: function(res) {
+          if (res.error === 0) {
+          } else {
+            layer.msg(res.errmsg);
+          }
+        },
+      });
+      // fetch 方式
+      // let d = {
+      //   name: data.field.name,
+      //   password: CryptoJS.MD5(data.field.password).toString(),
+      // }
+      // fetch('/api/Home/Index/test6',{
+      //   method:'POST',
+      //   body: JSON.stringify(d)
+      // })
+      //   .then(response => response.json())
+      //   .then(res => {
+      //     if (res.error !== 0) {
+      //       layer.msg(res.errmsg);
+      //     }
+      //   })
+      //   .catch(error => {
+      //     console.error('Error:', error);
+      //   });
+      return false;
+    });
+  });
+</script>
+
+</body>
+</html>

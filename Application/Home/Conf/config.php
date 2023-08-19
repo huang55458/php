@@ -14,10 +14,8 @@ return array(
 
 
     // cache存储方式
-    'DATA_CACHE_TYPE'                => 'Redis',
+    'DATA_CACHE_TYPE'        => 'Redis',
     // 防刷cache存储方式
-    'PR_CACHE_TYPE'                  => 'Redis',
-
-
-
+    'PR_CACHE_TYPE'          => 'Redis',
+    'DEFAULT_ACTION'         => 'login',
 );

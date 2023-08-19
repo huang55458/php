@@ -9,10 +9,12 @@ class ERRNO
     // 系统内置错误码
     const SUCCESS           = 0;
     const USER_PWD_ERROR = -101;
+    const NO_LOGIN = -102;
 
     const ERRNO_DICTS = [
         self::SUCCESS             => "成功",
         self::USER_PWD_ERROR => '用户名或密码错误',
+        self::NO_LOGIN => '未登录',
     ];
 
     /**

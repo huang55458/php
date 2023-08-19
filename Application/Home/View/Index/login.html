@@ -82,6 +82,7 @@
           if (res.error === 0) {
           } else {
             layer.msg(res.errmsg);
+            return false;
           }
         },
       });
@@ -103,7 +104,6 @@
       //   .catch(error => {
       //     console.error('Error:', error);
       //   });
-      return false;
     });
   });
 </script>

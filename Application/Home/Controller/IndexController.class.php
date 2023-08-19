@@ -13,7 +13,6 @@ class IndexController extends Controller
     public function __construct()
     {
         parent::__construct();
-
         $this->req = json_decode(html_entity_decode(I("req", "", "htmlspecialchars")), true);
     }
 
@@ -53,6 +52,7 @@ class IndexController extends Controller
     }
 
     public function index() {
+        $this->loginCheck();
         $resp = [
             'name' => 'test'
         ];
@@ -83,7 +83,14 @@ class IndexController extends Controller
             $errno = ERRNO::USER_PWD_ERROR;
             $this->doResponse($errno, ERRNO::e($errno), []);
         } else {
+            session('user_id', $user['id']);
             $this->doResponse($errno, ERRNO::e($errno), [], 'index');
+        }
+    }
+    public function loginCheck() {
+        if (empty(session('user_id'))) {
+            $this->doResponse(ERRNO::NO_LOGIN, ERRNO::e(ERRNO::NO_LOGIN), []);
+            exit();
         }
     }
 }

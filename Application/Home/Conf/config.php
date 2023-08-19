@@ -17,5 +17,5 @@ return array(
     'DATA_CACHE_TYPE'        => 'Redis',
     // 防刷cache存储方式
     'PR_CACHE_TYPE'          => 'Redis',
-    'DEFAULT_ACTION'         => 'login',
+//    'DEFAULT_ACTION'         => 'login',
 );

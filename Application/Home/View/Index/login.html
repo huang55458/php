@@ -20,7 +20,7 @@
                 <div class="layui-col-md12" style="height: 26vh">
                 </div>
                 <div class="layui-col-md9" >
-                    <form class="layui-form" action="/api/Home/Index/test6" method="post">
+                    <form class="layui-form" action="/api/Home/Index/Index" method="post">
                         <div class="layui-form-item">
                             <label class="layui-form-label">用户名</label>
                             <div class="layui-input-block">
@@ -80,9 +80,9 @@
         dataType: 'json',
         success: function(res) {
           if (res.error === 0) {
+            location.reload();
           } else {
             layer.msg(res.errmsg);
-            return false;
           }
         },
       });
@@ -104,6 +104,7 @@
       //   .catch(error => {
       //     console.error('Error:', error);
       //   });
+      return false;
     });
   });
 </script>

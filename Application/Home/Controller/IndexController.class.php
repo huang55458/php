@@ -51,13 +51,10 @@ class IndexController extends Controller
         jdd($res);
     }
 
-    public function index() {
-        $this->loginCheck();
-        $resp = [
-            'name' => 'test'
-        ];
-        $this->assign("data", $resp);
-        $this->display('login', 'utf-8', 'text/html');
+    public function index($first_class = '', $second_class = '') {
+        !empty($first_class) && jdd($first_class);
+        $tpl = $this->loginCheck($first_class, $second_class);
+        $this->display($tpl, 'utf-8', 'text/html');
     }
 
     public function test4() {
@@ -83,14 +80,21 @@ class IndexController extends Controller
             $errno = ERRNO::USER_PWD_ERROR;
             $this->doResponse($errno, ERRNO::e($errno), []);
         } else {
-            session('user_id', $user['id']);
-            $this->doResponse($errno, ERRNO::e($errno), [], 'index');
+            session('user_id', $user[0]['id']);
+            $this->doResponse($errno, ERRNO::e($errno), []);
         }
     }
-    public function loginCheck() {
+    public function loginCheck($first_class, $second_class): string
+    {
         if (empty(session('user_id'))) {
-            $this->doResponse(ERRNO::NO_LOGIN, ERRNO::e(ERRNO::NO_LOGIN), []);
-            exit();
+//            $this->doResponse(ERRNO::NO_LOGIN, ERRNO::e(ERRNO::NO_LOGIN), []);
+//            exit();
+            return 'login';
         }
+        return 'index';
+    }
+
+    public function logout() {
+        session(null);
     }
 }

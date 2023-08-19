@@ -11,7 +11,7 @@ class TestBehavior extends Behavior
     {
         $ip = get_ip(0,true);
         if (S($ip) === false) {
-            S($ip, 'true', 2);
+            S($ip, 'true', 1);
         } else {
             header('Content-type: application/json');
             exit(json_encode(['errno'=>0, 'errmsg'=>'过于频繁'], 256));

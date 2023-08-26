@@ -1,5 +1,5 @@
 <?php
-require_once './Application/Common/Common/function.php';
+require_once './Application/Home/Common/function.php';
 
 function lmh_curl($type='get',$param=[],$return='php'){
     $ch = curl_init();
@@ -29,7 +29,7 @@ function lmh_curl($type='get',$param=[],$return='php'){
         return $res;
     }
 }
-// 可能需要修改的是这三个，加req
+// 可能需要修改的是这三个和req
 $cookie = 'Order_tr_down_loading_list_124566=false; Order_tr_up_loading_list_124566=false; PHPSESSID=8c217da199c197cbf3e31926a40d77e7; Hm_lvt_f59ed1ad07a4a48a248b87fac4f62903=1692664200,1692750598,1692837158,1692923125; user_id=124566; group_id=1000; company_id=62044; Hm_lpvt_f59ed1ad07a4a48a248b87fac4f62903=1692923804; 124566%7C62044%7C1000%7ClastHandleTime=1692923808785';
 $expense_type = 'point_trans_f';
 $co_type = 'co_trans_f';
@@ -71,3 +71,4 @@ function genSql(){
 //        echo json_encode($err_data,true)."\n";
 }
 genSql(); //过多运单无法核销费用生成sql语句
+// 本地执行记得去除代理 unset http_proxy

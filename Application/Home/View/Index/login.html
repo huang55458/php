@@ -79,8 +79,8 @@
         data: {req: JSON.stringify(d)},
         dataType: 'json',
         success: function(res) {
-          if (res.error === 0) {
-            return true;
+          if (res.errno === 0) {
+            reload()
           } else {
             layer.msg(res.errmsg);
           }
@@ -107,6 +107,11 @@
       return false;
     });
   });
+  function reload() {
+    setTimeout(function () {
+      location.reload();
+    }, 1000)
+  }
 </script>
 
 </body>

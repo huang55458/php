@@ -96,5 +96,6 @@ class IndexController extends Controller
 
     public function logout() {
         session(null);
+        $this->doResponse(ERRNO::SUCCESS, ERRNO::e(ERRNO::SUCCESS), []);
     }
 }

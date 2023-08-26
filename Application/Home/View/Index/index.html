@@ -38,17 +38,17 @@
         <ul class="layui-nav layui-layout-right">
             <li class="layui-nav-item layui-hide layui-show-md-inline-block">
                 <a href="javascript:;">
-                    <img src="//tva1.sinaimg.cn/crop.0.0.118.118.180/5db11ff4gw1e77d3nqrv8j203b03cweg.jpg" class="layui-nav-img">
+                    <img src="/static/imgs/1693032653507.png" class="layui-nav-img" alt="头像">
                     tester
                 </a>
                 <dl class="layui-nav-child">
-                    <dd><a href="">Your Profile</a></dd>
-                    <dd><a href="">Settings</a></dd>
-                    <dd><a href="">Sign out</a></dd>
+                    <dd><a href="javascript:">Your Profile</a></dd>
+                    <dd><a href="javascript:">Settings</a></dd>
+                    <dd><a href="javascript:" id="logout">Sign out</a></dd>
                 </dl>
             </li>
             <li class="layui-nav-item" lay-header-event="menuRight" lay-unselect>
-                <a href="javascript:;">
+                <a href="javascript:">
                     <i class="layui-icon layui-icon-more-vertical"></i>
                 </a>
             </li>
@@ -94,10 +94,13 @@
 </div>
 <script>
   layui.use(['element', 'layer', 'util'], function(){
-    var element = layui.element
-      ,layer = layui.layer
-      ,util = layui.util
-      ,$ = layui.$;
+    const element = layui.element
+      ,
+      layer = layui.layer
+      ,
+      util = layui.util
+      ,
+      $ = layui.$
 
     //头部事件
     util.event('lay-header-event', {
@@ -116,7 +119,33 @@
         });
       }
     });
+    $(document).on('click', '#logout', function(){
+      $.ajax({
+        url: '/api/Home/Index/logout',
+        type: 'GET',
+        data: '',
+        dataType: 'json',
+        success: function(res) {
+          if (res.errno === 0) {
+            reload()
+          } else {
+            layer.msg(res.errmsg);
+          }
+        },
+      });
+    });
+    // $('#logout').click( function(){
+    //   // 按钮点击后的操作
+    //   alert('test')
+    //   layer.msg('登出');
+    // });
   });
+
+  function reload() {
+    setTimeout(function () {
+      location.reload();
+    }, 1000)
+  }
 </script>
 </body>
 </html>

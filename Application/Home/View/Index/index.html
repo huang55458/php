@@ -58,12 +58,12 @@
     <div class="layui-side layui-bg-black">
         <div class="layui-side-scroll">
             <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
-            <ul class="layui-nav layui-nav-tree" lay-filter="test">
+            <ul class="layui-nav layui-nav-tree" lay-filter="side-nav">
                 <li class="layui-nav-item layui-nav-itemed">
                     <a class="" href="javascript:;">menu group 1</a>
                     <dl class="layui-nav-child">
-                        <dd><a href="/?first_class=test&second_class=test">menu 1</a></dd>
-                        <dd><a href="javascript:;">menu 2</a></dd>
+                        <dd><a href_bak="/static/html/xray.html" >menu 1</a></dd>
+                        <dd><a href_bak="/static/html/kcptun.html" >menu 2</a></dd>
                         <dd><a href="javascript:;">menu 3</a></dd>
                         <dd><a href="">the links</a></dd>
                     </dl>
@@ -85,27 +85,6 @@
     <div class="layui-body">
         <!-- 内容主体区域 -->
         <div style="padding: 15px;">
-            <div class="layui-tab layui-tab-card" lay-allowclose="true">
-                <ul class="layui-tab-title">
-                    <li class="layui-this">网站设置</li>
-                    <li>用户基本管理</li>
-                    <li>权限分配</li>
-                    <li>商品管理</li>
-                    <li>订单管理</li>
-                </ul>
-                <div class="layui-tab-content" style="height: 100vh;">
-                    <div class="layui-tab-item layui-show">
-                        1. 我个人比较喜欢卡片风格的，所以你发现又是以卡片的风格举例
-                        2. 删除功能适用于所有风格
-                    </div>
-                    <div class="layui-tab-item">2</div>
-                    <div class="layui-tab-item">3</div>
-                    <div class="layui-tab-item">4</div>
-                    <div class="layui-tab-item">5</div>
-                    <div class="layui-tab-item">6</div>
-                </div>
-            </div>
-
         </div>
     </div>
 
@@ -141,6 +120,7 @@
         });
       }
     });
+
     $(document).on('click', '#logout', function(){
       $.ajax({
         url: '/api/Home/Index/logout',
@@ -161,6 +141,12 @@
     //   alert('test')
     //   layer.msg('登出');
     // });
+
+    // 监听菜单点击事件
+    element.on('nav(side-nav)', function(elem){
+      let url = elem.attr('href_bak') // 获取菜单链接地址
+      $('.layui-body').load(url);
+    });
   });
 
   function reload() {

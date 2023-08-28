@@ -52,7 +52,8 @@ class IndexController extends Controller
     }
 
     public function index($first_class = '', $second_class = '') {
-        !empty($first_class) && jdd($first_class);
+        !empty($this->req['first_class']) && $first_class = $this->req['first_class'];
+        !empty($this->req['second_class']) && $second_class = $this->req['second_class'];
         $tpl = $this->loginCheck($first_class, $second_class);
         $this->display($tpl, 'utf-8', 'text/html');
     }
@@ -89,6 +90,9 @@ class IndexController extends Controller
         if (empty(session('user_id'))) {
 //            $this->doResponse(ERRNO::NO_LOGIN, ERRNO::e(ERRNO::NO_LOGIN), []);
 //            exit();
+            return 'login';
+        }
+        if ($first_class === 'test') {
             return 'login';
         }
         return 'index';

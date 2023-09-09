@@ -21,6 +21,7 @@ const APP_DEBUG = true;
 
 // 定义应用目录
 define('APP_PATH', './Application/');
+define('LOG_PATH', '/var/log/thinkphp3');
 
 // 引入ThinkPHP入口文件
 require './ThinkPHP/ThinkPHP.php';

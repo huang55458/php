@@ -1164,7 +1164,7 @@ function cmm_fastcgi_finish_request($r_sync = false, $script_execute_timeout = 3
         B('Common\Behavior\BusinessSync');
         B('Common\Behavior\RetrieverSync');
     }
-    B('Common\Behavior\updateRefreshCache');
+//    B('Common\Behavior\updateRefreshCache');
     fastcgi_finish_request();
     set_time_limit($script_execute_timeout);
 }

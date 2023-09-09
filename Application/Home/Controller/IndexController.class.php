@@ -2,6 +2,7 @@
 namespace Home\Controller;
 
 use Home\Cnsts\ERRNO;
+use Home\Model\SocketModel;
 use Think\Controller;
 
 class IndexController extends Controller
@@ -9,6 +10,8 @@ class IndexController extends Controller
 
     // 请求参数
     protected $req = null;
+    protected $socket = null;
+    protected $client = null;
 
     public function __construct()
     {
@@ -101,5 +104,41 @@ class IndexController extends Controller
     public function logout() {
         session(null);
         $this->doResponse(ERRNO::SUCCESS, ERRNO::e(ERRNO::SUCCESS), []);
+    }
+
+    public function socketInit() {
+        $this->doResponse(ERRNO::SUCCESS, ERRNO::e(ERRNO::SUCCESS), []);
+        cmm_fastcgi_finish_request();
+//        (new SocketModel())->start();
+    }
+
+    public function socketClient() {
+        $this->client = $this->getSocketClient();
+        if ($this->client !== false) {
+            $message = 'test';
+            while (true) {
+                socket_recv($this->client, $message, 1000, MSG_WAITALL);
+                cmm_log([' socket Client 收到消息：' . $message]);
+            }
+        }
+    }
+
+    public function sendMessage($message = 'hello') {
+        empty($this->client) && $this->client = $this->getSocketClient();
+        if ($this->client !== false) {
+            socket_write($this->client, $message, strlen($message));
+        }
+    }
+    public function getSocketClient()
+    {
+        $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+        cmm_log([' socket Client 开始连接']);
+        $result = socket_connect($socket,'a.chumeng1.top', 12345);
+        if ($result === false) {
+            cmm_log(["socket Client 连接失败: " . socket_strerror(socket_last_error())]);
+        } else {
+            cmm_log([' socket Client 连接成功']);
+        }
+        return $result;
     }
 }

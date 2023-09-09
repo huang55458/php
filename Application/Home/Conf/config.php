@@ -18,4 +18,8 @@ return array(
     // 防刷cache存储方式
     'PR_CACHE_TYPE'          => 'Redis',
 //    'DEFAULT_ACTION'         => 'login',
+
+//    'LOG_RECORD' => true, // 开启日志记录
+//    'LOG_FORMAT' => '[%s][%s] %s', // 设置日志格式
+    'LOG_FILE_SIZE'          => 209715200,
 );

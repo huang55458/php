@@ -3,8 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link href="/static/layui2.7.6/css/layui.css" rel="stylesheet">
+    <script src="/static/layui2.7.6/layui.js"></script>
 </head>
 <body>
-<h2>test</h2>
+<div id="root"></div>
+<script>
+  var host = 'wss://a.chumeng1.top:12345';
+  var socket = new WebSocket(host);
+
+  socket.onmessage = function(e) {
+    document.getElementById('root').innerHTML = e.data;
+  };
+</script>
 </body>
 </html>

@@ -10,11 +10,13 @@ class ERRNO
     const SUCCESS           = 0;
     const USER_PWD_ERROR = -101;
     const NO_LOGIN = -102;
+    const MQ_TOPIC_NOT_EXISTS = -103;
 
     const ERRNO_DICTS = [
         self::SUCCESS             => "成功",
         self::USER_PWD_ERROR => '用户名或密码错误',
         self::NO_LOGIN => '未登录',
+        self::MQ_TOPIC_NOT_EXISTS => '消息队列不存在',
     ];
 
     /**

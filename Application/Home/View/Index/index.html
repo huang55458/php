@@ -11,6 +11,7 @@
 
     <!-- 引入 layui.js -->
     <script src="/static/layui2.7.6/layui.js"></script>
+    <script src='/static/js/socket.io_1.3.7_socket.io.js'></script>
 </head>
 <body>
 <div class="layui-layout layui-layout-admin">
@@ -85,6 +86,12 @@
     <div class="layui-body">
         <!-- 内容主体区域 -->
         <div style="padding: 15px;">
+            <div class="layui-btn-container">
+                <button type="button" class="layui-btn layui-btn-primary" id="start_test">开始测试</button>
+            </div>
+            <pre class="layui-code">
+                // 在里面放置任意的文本内容
+            </pre>
         </div>
     </div>
 
@@ -147,6 +154,37 @@
       let url = elem.attr('href_bak') // 获取菜单链接地址
       $('.layui-body').load(url);
     });
+
+    $(document).on('click', '#start_test', function(){
+      $.ajax({
+        url: '/api/Home/Index/socketInit',
+        type: 'GET',
+        data: '',
+        dataType: 'json',
+        success: function(res) {
+        },
+      });
+
+
+
+
+  // 初始化io对象
+  //
+      const socket = io('https://' + document.domain + ':9502')
+      // uid 可以为网站用户的uid，作为例子这里用session_id代替
+      const uid = '<?php echo session_id();?>'
+      // 当socket连接后发送登录请求
+      socket.on('connect', function () {
+        layer.msg("Connected")
+        socket.emit('login', uid)
+      })
+      // 当服务端推送来消息时触发，这里简单的aler出来，用户可做成自己的展示效果
+      socket.on('new_msg', function (msg) {
+        layer.msg(msg)
+      })
+
+    });
+
   });
 
   function reload() {

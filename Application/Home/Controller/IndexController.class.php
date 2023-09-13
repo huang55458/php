@@ -2,6 +2,7 @@
 namespace Home\Controller;
 
 use Home\Cnsts\ERRNO;
+use Home\Model\MQ;
 use Home\Model\SocketModel;
 use Think\Controller;
 
@@ -140,5 +141,19 @@ class IndexController extends Controller
             cmm_log([' socket Client 连接成功']);
         }
         return $result;
+    }
+    public function kafka() {
+//        jdd(C('KAFKA'));
+        $val = MQ::send(C('KAFKA_TOPIC')['test'], ['test' => 'test']);
+
+//        $conf = new \RdKafka\Conf();
+//        $conf->set('metadata.broker.list', '45.32.46.233:9091'); //设置Kafka broker地址
+//        $producer = new \RdKafka\Producer($conf); //创建生产者对象
+//        $topic = $producer->newTopic('test'); //创建主题
+//        $topic->produce(RD_KAFKA_PARTITION_UA, 0, 'Hello, World!'); //发送消息
+//        $producer->poll(0); //等待消息发送完成
+//        while ($producer->getOutQLen() > 0) { //检查发送队列是否为空
+//            $producer->poll(50);
+//        }
     }
 }

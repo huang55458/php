@@ -1,0 +1,32 @@
+git fetch && echo origin/$(git branch | grep '*' | awk '{print $2}') | xargs git reset --hard
+alias sync_t='rsync -av  ./thinkphp_3.2.4/* root@a.chumeng1.top:/opt/thinkphp_3.2.4'
+jq --arg listen 11343 '.listen = $listen' config.json  > config1.json
+curl -s -L a.chumeng1.top/api/Home/Hello/test
+tail -f 23_08_23.log | grep 'You have an error in your SQL syntax'
+
+kafka-topics.sh --zookeeper zookeeper:2181/kafka --topic test --create --partitions 1 --replication-factor 1（/kafka 没有会报错，docker-compose 部署host 可用service指定）
+kafka-console-producer.sh --topic test --broker-list kafka1:9091
+kafka-console-consumer.sh --bootstrap-server kafka1:9091 --topic test --from-beginning
+
+version: '3.8'
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    restart: always
+  kafka1:
+    image: wurstmeister/kafka
+    depends_on: [ zookeeper ]
+    container_name: kafka1
+    ports:
+      - "9091:9091"
+    environment:
+      HOSTNAME: kafka1
+      KAFKA_BROKER_ID: 0
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://45.32.46.233:9091
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9091
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181/kafka
+    extra_hosts:
+      kafka1: 45.32.46.233

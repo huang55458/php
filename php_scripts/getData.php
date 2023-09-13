@@ -1,5 +1,5 @@
 <?php
-
+require_once './../Application/Home/Common/function.php';
 
 function lmh_curl($type='get',$param=[],$return='php'){
     $ch = curl_init();
@@ -34,25 +34,28 @@ function lmh_curl($type='get',$param=[],$return='php'){
 // 该方法去对比资金流水的凭证日期的是否正确是否跟结算日期的区间是否一致 不一致的输出来
 diffDate();
 function diffDate(){
-    $param['url'] = 'http://yundan.vkj56.cn/api/Table/Search/orderList?logid=12456601691552849205&gid=1000&btnLoadingTag=off';
-    $param['cookie'] = 'Order_tr_down_loading_list_124566=false; PHPSESSID=70ea333664ba38008229e3f66b28589f; Hm_lvt_f59ed1ad07a4a48a248b87fac4f62903=1691108553,1691195234,1691378262,1691457263; user_id=124566; group_id=1000; company_id=2; Hm_lpvt_f59ed1ad07a4a48a248b87fac4f62903=1691457274; 124566%7C62044%7C1000%7ClastHandleTime=1691459142173';
+    $param['url'] = 'http://yundan.vkj56.cn/api/Table/Search/docDetailList?logid=12456601694508516492&gid=1000';
+    $param['cookie'] = 'Order_tr_down_loading_list_124566=false; Order_tr_up_loading_list_124566=false; Hm_lvt_f59ed1ad07a4a48a248b87fac4f62903=1694132977,1694219408,1694392364,1694478807; Hm_lpvt_f59ed1ad07a4a48a248b87fac4f62903=1694478807; PHPSESSID=2f90c242229b5a7ff1e930355c75e339; user_id=124566; group_id=1000; 124566%7C62044%7C1000%7ClastHandleTime=1694489987953; 124566%7C62044%7C1000%7CisTimeoutLock=1; company_id=2';
     $err_data = [];
     for ($i=1;$i<=1;$i++){
         $param['data']=[
-            'req' =>'{"category":"Order","tab":"od_all","sort":{},"page_num":1,"page_size":100,"fetch_mode":"body","cid":"73067e693dac1586773c349fa93a5d65","query":{"9999":{"_logic":"or","query_num._exact_":["23070738147","23070739587","23070740744","23070730888","23070733792","23070736193","23070736674","23070721254","23070722194","23070725793","23070728437","23070709873","23070711595","23070635459"],"order_num._exact_":["23070738147","23070739587","23070740744","23070730888","23070733792","23070736193","23070736674","23070721254","23070722194","23070725793","23070728437","23070709873","23070711595","23070635459"]}},"filter":{},"batch_search_order_by":["query_num","order_num"]}'
+            'req' =>'{"category":"Accounts","tab":"doc_detail_list","sort":{"doc_date":"desc"},"page_num":1,"page_size":200,"cid":"73067e693dac1586773c349fa93a5d65","query":{"ledger_name":["【十六部】唐元东新项目2023","【十六部】昝亮亮新项目2023","【十六部】非得/友融济南仓","【十六部】非得/友融广州仓","【十六部】众合物流项目","【十六部】一滕新材料项目"]},"filter":{"doc_date":[[">=","2023-09-07 07:00:00"],["<=","2023-09-13 23:59:59"]]},"fetch_mode":"body"}'
 //            'req' =>''
         ];
         $data = lmh_curl('post',$param);
         $data = $data['res']['data'];
-        echo $i."\n";
+//        echo $i."\n";
 //        foreach ($data as $v){
 //            if(strtotime($v['Accounts|doc_date']) > strtotime('2023-07-01 00:00:00') || strtotime($v['Accounts|doc_date']) < strtotime('2023-06-01 00:00:00')){
 //                $err_data[]=$v;
 //            }
 //        }
-        $err_data = array_column($data, 'od_id');
+//        jdd($data);
+        $err_data = array_column($data, 'doc_id');
         $err_data = array_map('intval', $err_data);
-        echo json_encode($err_data,true)."\n";
+//        jdd($err_data);
+        $ids = implode(',', $err_data);
+        file_put_contents(__DIR__.'\tmp.txt', $ids);
     }
 }
 

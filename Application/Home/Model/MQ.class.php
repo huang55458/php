@@ -44,16 +44,16 @@ class MQ
                 $topics[$topic] = $producer[$topic]->newTopic($topic, $topic_conf);
             }
             // send data
-            $data['value']['_producer_send_time'] = microtime(true);
+//            $data['value']['_producer_send_time'] = microtime(true);
             // REQUEST_ID
-            $data['value']['_request_id'] = REQUEST_ID;
+//            $data['value']['_request_id'] = REQUEST_ID;
             // producer hostname
-            $data['value']['_hostname'] = gethostname();
+//            $data['value']['_hostname'] = gethostname();
             // group_id 分库
-            $data['value']['_group_id'] = GROUP_ID;
+//            $data['value']['_group_id'] = GROUP_ID;
             // session_id 异步处理需要共享session
-            $data['value']['_s_group_id']   = session('group_id');
-            $data['value']['_s_company_id'] = session('company_id');
+//            $data['value']['_s_group_id']   = session('group_id');
+//            $data['value']['_s_company_id'] = session('company_id');
             $data['value']['_s_user_id']    = session('user_id');
             if ($key === null) {
                 $topics[$topic]->produce(($partition !== null) ? ($partition) : RD_KAFKA_PARTITION_UA, 0,
@@ -62,6 +62,12 @@ class MQ
                 $topics[$topic]->produce(($partition !== null) ? ($partition) : RD_KAFKA_PARTITION_UA, 0,
                                          json_encode($data, JSON_UNESCAPED_UNICODE), $key);
             }
+
+            $producer[$topic]->poll(0); //等待消息发送完成
+            while ($producer[$topic]->getOutQLen() > 0) { //检查发送队列是否为空
+                $producer[$topic]->poll(50);
+            }
+
 //            if('import' != $topic) {
 //                cmm_log('kafka_producer: ' . json_encode($topic) . ' ' . json_encode($data) . ' ' . ($key?:'NULL') . ' ' .
 //                    $partition);

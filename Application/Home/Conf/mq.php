@@ -3,7 +3,7 @@
 
  {
     // 默认
-    $uri = '45.32.46.233:9091';
+    $uri = '127.0.0.1:9091';
     $topic = [
         'test'     => ['name' => 'test', 'uri' => $uri],
 //        'test'     => ['name' => 'test', 'uri' => $uri, 'partition' => 1], // partition分区数，不填则报错

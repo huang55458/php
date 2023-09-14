@@ -156,4 +156,46 @@ class IndexController extends Controller
 //            $producer->poll(50);
 //        }
     }
+    /*
+     * 默认的分区策略是：
+如果在发消息的时候指定了分区，则消息投递到指定的分区
+如果没有指定分区，但是消息的key不为空，则基于key的哈希值来选择一个分区
+如果既没有指定分区，且消息的key也是空，则用轮询的方式选择一个分区
+    生产者发送一条消息只会进入一个分区
+    不同的消费者组会读同一条消息
+     */
+    public function consumer() {
+        $brokers = "45.32.46.233:9091"; // Kafka broker 服务器地址和端口
+        $topic = "test"; // 消费的主题名称
+        $groupId = "test_group"; // 消费者组 ID
+
+        $conf = new \RdKafka\Conf();
+        $conf->set('group.id', $groupId);
+
+        $consumer = new \RdKafka\Consumer($conf);
+        $consumer->addBrokers($brokers);
+
+        $topicConf = new \RdKafka\TopicConf();
+        $topicConf->set('auto.offset.reset', 'smallest');
+
+        $topic = $consumer->newTopic($topic, $topicConf);
+
+        $topic->consumeStart(0, RD_KAFKA_OFFSET_STORED);
+
+        while (true) {
+            $message = $topic->consume(0, 1000);
+            if ($message === null) {
+                continue;
+            }
+
+            if ($message->err) {
+                echo "Error: " . $message->errstr() . "\n";
+                break;
+            }
+
+            jdd( "Received message: " . $message->payload );
+        }
+
+        $consumer->close();
+    }
 }

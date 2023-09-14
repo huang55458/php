@@ -58,7 +58,7 @@ class IndexController extends Controller
     public function index($first_class = '', $second_class = '') {
         !empty($this->req['first_class']) && $first_class = $this->req['first_class'];
         !empty($this->req['second_class']) && $second_class = $this->req['second_class'];
-        $tpl = $this->loginCheck($first_class, $second_class);
+        $tpl = (new \Home\Service\IndexService())->loginCheck($first_class, $second_class);
         $this->display($tpl, 'utf-8', 'text/html');
     }
 
@@ -89,113 +89,9 @@ class IndexController extends Controller
             $this->doResponse($errno, ERRNO::e($errno), []);
         }
     }
-    public function loginCheck($first_class, $second_class): string
-    {
-        if (empty(session('user_id'))) {
-//            $this->doResponse(ERRNO::NO_LOGIN, ERRNO::e(ERRNO::NO_LOGIN), []);
-//            exit();
-            return 'login';
-        }
-        if ($first_class === 'test') {
-            return 'login';
-        }
-        return 'index';
-    }
 
     public function logout() {
         session(null);
         $this->doResponse(ERRNO::SUCCESS, ERRNO::e(ERRNO::SUCCESS), []);
-    }
-
-    public function socketInit() {
-        $this->doResponse(ERRNO::SUCCESS, ERRNO::e(ERRNO::SUCCESS), []);
-        cmm_fastcgi_finish_request();
-//        (new SocketModel())->start();
-    }
-
-    public function socketClient() {
-        $this->client = $this->getSocketClient();
-        if ($this->client !== false) {
-            $message = 'test';
-            while (true) {
-                socket_recv($this->client, $message, 1000, MSG_WAITALL);
-                cmm_log([' socket Client 收到消息：' . $message]);
-            }
-        }
-    }
-
-    public function sendMessage($message = 'hello') {
-        empty($this->client) && $this->client = $this->getSocketClient();
-        if ($this->client !== false) {
-            socket_write($this->client, $message, strlen($message));
-        }
-    }
-    public function getSocketClient()
-    {
-        $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
-        cmm_log([' socket Client 开始连接']);
-        $result = socket_connect($socket,'a.chumeng1.top', 12345);
-        if ($result === false) {
-            cmm_log(["socket Client 连接失败: " . socket_strerror(socket_last_error())]);
-        } else {
-            cmm_log([' socket Client 连接成功']);
-        }
-        return $result;
-    }
-    public function kafka() {
-//        jdd(C('KAFKA'));
-        $val = MQ::send(C('KAFKA_TOPIC')['test'], ['test' => 'test']);
-
-//        $conf = new \RdKafka\Conf();
-//        $conf->set('metadata.broker.list', '45.32.46.233:9091'); //设置Kafka broker地址
-//        $producer = new \RdKafka\Producer($conf); //创建生产者对象
-//        $topic = $producer->newTopic('test'); //创建主题
-//        $topic->produce(RD_KAFKA_PARTITION_UA, 0, 'Hello, World!'); //发送消息
-//        $producer->poll(0); //等待消息发送完成
-//        while ($producer->getOutQLen() > 0) { //检查发送队列是否为空
-//            $producer->poll(50);
-//        }
-    }
-    /*
-     * 默认的分区策略是：
-如果在发消息的时候指定了分区，则消息投递到指定的分区
-如果没有指定分区，但是消息的key不为空，则基于key的哈希值来选择一个分区
-如果既没有指定分区，且消息的key也是空，则用轮询的方式选择一个分区
-    生产者发送一条消息只会进入一个分区
-    不同的消费者组会读同一条消息
-     */
-    public function consumer() {
-        $brokers = "45.32.46.233:9091"; // Kafka broker 服务器地址和端口
-        $topic = "test"; // 消费的主题名称
-        $groupId = "test_group"; // 消费者组 ID
-
-        $conf = new \RdKafka\Conf();
-        $conf->set('group.id', $groupId);
-
-        $consumer = new \RdKafka\Consumer($conf);
-        $consumer->addBrokers($brokers);
-
-        $topicConf = new \RdKafka\TopicConf();
-        $topicConf->set('auto.offset.reset', 'smallest');
-
-        $topic = $consumer->newTopic($topic, $topicConf);
-
-        $topic->consumeStart(0, RD_KAFKA_OFFSET_STORED);
-
-        while (true) {
-            $message = $topic->consume(0, 1000);
-            if ($message === null) {
-                continue;
-            }
-
-            if ($message->err) {
-                echo "Error: " . $message->errstr() . "\n";
-                break;
-            }
-
-            jdd( "Received message: " . $message->payload );
-        }
-
-        $consumer->close();
     }
 }

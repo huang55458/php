@@ -1,12 +1,6 @@
 <?php
 
-use Accounts\Service\LedgerService;
-use Common\Cnsts\BALANCE;
-use Common\Cnsts\ERRNO;
-use Common\Cnsts\LOG_TEMPLATE;
-use Common\Cnsts\TRADE_RECORD;
-use Common\Service\MessageBus\Message;
-use Common\Utils;
+use Home\Cnsts\ERRNO;
 
 /**
  * 获取系统设置
@@ -1502,7 +1496,7 @@ function email($title, $content, $options)
     $cc                 = array_key_exists('cc', $options) ? $autoCompleteDomain($options['cc']) : '';
     $bcc                = array_key_exists('bcc', $options) ? $autoCompleteDomain($options['bcc']) : '';
     $subject            = $title;
-    $smtp               = new Utils\Email($server, $port, true, $username, $password);
+    $smtp               = new \Home\Model\Email($server, $port, true, $username, $password);
     if ($to and $smtp->send($to, $username, $subject, $content, $content_type, $cc, $bcc)) {
         return ERRNO::SUCCESS;
     } else {

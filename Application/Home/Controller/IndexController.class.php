@@ -94,4 +94,19 @@ class IndexController extends Controller
         session(null);
         $this->doResponse(ERRNO::SUCCESS, ERRNO::e(ERRNO::SUCCESS), []);
     }
+
+    public function sendEmail() {
+        $title = '这是一个测试';
+        $time = '2000-2-2 34:34:33';
+        $content = <<<EOF
+        <h1>Hello World!</h1> 
+        <h2 id="test">$time</h2>
+        EOF;
+        $option = [
+            'to' => '----------@------',
+            'username' => '----------@------',
+            'password' => '***********',
+        ];
+        $res = email($title, $content, $option);
+    }
 }

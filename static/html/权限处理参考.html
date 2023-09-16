@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="/static/layui2.7.6/css/layui.css" rel="stylesheet">
+    <!-- 引入 layui.js -->
+    <script src="/static/layui2.7.6/layui.js"></script>
+</head>
+<body>
+    <div id="sideMenu">test</div>
+</body>
+<!-- laytpl 使用 -->
+<script>
+  layui.use(['element', 'laytpl'], function(){
+    var element = layui.element;
+    var laytpl = layui.laytpl;
+
+    // 定义权限数组
+    var permissions = ["menu1", "menu2", "menu3"];
+
+    // 渲染侧拉菜单
+    var sideMenuData = [
+      {title: '菜单1', arr: [{title: '菜单1',href: '#'},{title: '菜单1',href: '#'}], href: '#', permission: 'menu1'},
+      {title: '菜单2', arr: [{title: '菜单1',href: '#'},{title: '菜单1',href: '#'}], href: '#', permission: 'menu2'},
+      {title: '菜单3', arr: [{title: '菜单1',href: '#'},{title: '菜单1',href: '#'}], href: '#', permission: 'menu3'},
+      {title: '菜单4', arr: [{title: '菜单1',href: '#'},{title: '菜单1',href: '#'}], href: '#', permission: 'menu4'}
+    ];
+    // 过滤权限，只显示有权限的菜单
+    const filteredMenuData = []
+    for (let i = 0; i < sideMenuData.length; i++) {
+      if (permissions.indexOf(sideMenuData[i].permission) !== -1) {
+        filteredMenuData.push(sideMenuData[i]);
+      }
+    }
+
+    // 渲染侧拉菜单
+    const getTpl = sideMenuTpl.innerHTML
+    laytpl(getTpl).render(filteredMenuData, function(html){
+      document.getElementById('sideMenu').innerHTML = html;
+      element.init(); // 更新渲染
+    });
+  });
+</script>
+<script type="text/html" id="sideMenuTpl">
+<!--    {{# layui.each(d, function(index, item){ }}-->
+<!--    <li class="layui-nav-item">-->
+<!--        <a href="{{ item.href }}" class="layui-icon {{ item.icon }}">{{ item.title }}</a>-->
+<!--    </li>-->
+<!--    {{# }); }}-->
+    {{# layui.each(d, function(index, item){ }}
+
+        <li class="layui-nav-item layui-nav-itemed">
+            <a class="" href="{{ item.href }}">{{ item.title }}</a>
+            <dl class="layui-nav-child">
+                {{# layui.each(item["arr"], function(index2, item2){ }}
+                {{# console.log(index2, item2) }}
+                    <dd><a href_bak="{{ item2.href }}" >{{ item2.title }}</a></dd>
+                {{# }); }}
+            </dl>
+        </li>
+    {{# }); }}
+</script>
+</html>

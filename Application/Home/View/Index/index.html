@@ -65,7 +65,7 @@
                     <dl class="layui-nav-child">
                         <dd><a href_bak="/static/html/xray.html" >menu 1</a></dd>
                         <dd><a href_bak="/static/html/kcptun.html" >menu 2</a></dd>
-                        <dd><a href_bak="/static/html/test.html">menu 3</a></dd>
+                        <dd><a href_bak="/static/html/animal/learn.html">menu 3</a></dd>
                         <dd><a href="">the links</a></dd>
                     </dl>
                 </li>
@@ -151,8 +151,10 @@
 
     // 监听菜单点击事件
     element.on('nav(side-nav)', function(elem){
+      console.log('start loading')
       let url = elem.attr('href_bak') // 获取菜单链接地址
       $('.layui-body').load(url);
+      console.log(url)
     });
 
     $(document).on('click', '#start_test', function(){
@@ -170,18 +172,18 @@
 
   // 初始化io对象
   //
-      const socket = io('https://' + document.domain + ':9502')
-      // uid 可以为网站用户的uid，作为例子这里用session_id代替
-      const uid = '<?php echo session_id();?>'
-      // 当socket连接后发送登录请求
-      socket.on('connect', function () {
-        layer.msg("Connected")
-        socket.emit('login', uid)
-      })
-      // 当服务端推送来消息时触发，这里简单的aler出来，用户可做成自己的展示效果
-      socket.on('new_msg', function (msg) {
-        layer.msg(msg)
-      })
+  //     const socket = io('https://' + document.domain + ':9502')
+  //     // uid 可以为网站用户的uid，作为例子这里用session_id代替
+  //     const uid = '<?php echo session_id();?>'
+  //     // 当socket连接后发送登录请求
+  //     socket.on('connect', function () {
+  //       layer.msg("Connected")
+  //       socket.emit('login', uid)
+  //     })
+  //     // 当服务端推送来消息时触发，这里简单的aler出来，用户可做成自己的展示效果
+  //     socket.on('new_msg', function (msg) {
+  //       layer.msg(msg)
+  //     })
 
     });
 

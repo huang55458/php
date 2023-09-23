@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+<!--    脚本文件都放在网页尾部加载-->
+    <script charset="utf-8" src="/static/js/gsap.js"></script>
+    <link href="/static/layui2.7.6/css/layui.css" rel="stylesheet">
+    <!-- 引入 layui.js -->
+    <script src="/static/layui2.7.6/layui.js"></script>
+</head>
+<body>
+<img src="/static/imgs/test.ico" alt="fire" id="img">
+<div class="layui-btn-container">
+    <button type="button" class="layui-btn layui-btn-primary" id="start">开始</button>
+</div>
+</body>
+<script>
+
+//   duration：动画持续时间（秒） 默认值：0.5
+//   delay：动画开始前的延迟量（秒）
+// repeat：动画应该重复多少次。-1为一直重复
+//   yoyo：如果为 true，则每隔一个重复，补间将沿相反方向运行。（像悠悠球一样）默认值：false
+//   ease：控制动画期间的变化率。
+// onComplete：动画完成时调用的函数
+//   onUpdate：动画值更新时调用的函数
+
+
+
+
+    layui.use(['element', 'layer', 'util'], function(){
+      const element = layui.element, layer = layui.layer, util = layui.util, $ = layui.$
+
+      $(document).on('click', '#start', function(){
+
+        gsap.to(".img", { x: 200 })
+
+
+      });
+    });
+
+
+
+
+gsap.from("", {
+  duration: 2,
+  scale: 0.5,
+  opacity: 0,
+  delay: 0.5,
+  stagger: 0.2,
+  ease: "elastic",
+  force3D: true
+});
+
+document.querySelectorAll(".box").forEach(function(box) {
+  box.addEventListener("click", function() {
+    gsap.to(".box", {
+      duration: 0.5,
+      opacity: 0,
+      y: -100,
+      stagger: 0.1,
+      ease: "back.in"
+    });
+  });
+});
+
+
+
+
+</script>
+</html>

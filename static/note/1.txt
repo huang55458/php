@@ -30,3 +30,30 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181/kafka
     extra_hosts:
       kafka1: 45.32.46.233
+
+
+
+sed -i ':t;N;s/\n/,/;b t' demo.txt   换行转逗号
+sed -i '/^$/d' demo.txt
+
+
+let test = document.getElementsByClassName('fn-table-col-order_num')
+for (let i =0; i< test.length;i++) {
+    console.log(test[i].firstChild.firstChild.firstChild.firstChild.firstChild.firstChild.innerHTML)
+}
+
+
+
+  fetch('http://localhost:9018/api/Table/Search/orderList?logid=26693801695434055828&gid=1000&btnLoadingTag=off', {
+    method: 'POST',
+    body: '{"category":"Order","tab":"co","sort":{"billing_date":"desc"},"page_num":1,"page_size":100,"fetch_mode":"body","cid":"73067e693dac1586773c349fa93a5d65","query":{},"filter":{"billing_date":[[">=","2023-08-23 00:00:00"],["<=","2023-09-23 23:59:59"]]}}'
+  })
+    .then(response => response.json())
+    .then(res => {
+      console.log(res.errmsg)
+      data = res.res.data
+      console.log(JSON.stringify(data.map(item => +item.od_id)))
+    })
+    .catch(error => {
+      console.error('Error:', error)
+    })

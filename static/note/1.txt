@@ -3,6 +3,7 @@ alias sync_t='rsync -av  ./thinkphp_3.2.4/* root@a.chumeng1.top:/opt/thinkphp_3.
 jq --arg listen 11343 '.listen = $listen' config.json  > config1.json
 curl -s -L a.chumeng1.top/api/Home/Hello/test
 tail -f 23_08_23.log | grep 'You have an error in your SQL syntax'
+set ALL_PROXY=socks5:127.0.0.1:10808
 
 kafka-topics.sh --zookeeper zookeeper:2181/kafka --topic test --create --partitions 1 --replication-factor 1（/kafka 没有会报错，docker-compose 部署host 可用service指定）
 kafka-console-producer.sh --topic test --broker-list kafka1:9091
@@ -57,3 +58,17 @@ for (let i =0; i< test.length;i++) {
     .catch(error => {
       console.error('Error:', error)
     })
+
+
+[1, 2, 3, 4, 5].forEach(
+  (v, i, arr) => {
+    console.log('当前操作的od_id为'+v)
+    const xhr = new XMLHttpRequest()
+    xhr.open('GET', 'http://localhost:9018/api/Finance/DoData/upSingleV2?od_id='+v, false) // 设置 async 属性为 false
+    xhr.send()
+
+    if (xhr.status === 200) {
+      console.log(xhr.responseText)
+    }
+  }
+)

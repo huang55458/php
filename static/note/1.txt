@@ -34,7 +34,7 @@ services:
 
 
 
-sed -i ':t;N;s/\n/,/;b t' demo.txt   换行转逗号
+sed -i ':a;N;$!ba;s/\n/,/g' demo.txt   换行转逗号
 sed -i '/^$/d' demo.txt
 
 

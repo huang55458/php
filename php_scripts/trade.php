@@ -1,5 +1,5 @@
 <?php
-ini_set('memory_limit', 1024*1024*1024);
+//ini_set('memory_limit', 1024*1024*1024);
 require_once './../Application/Home/Common/function.php';
 
 function lmh_curl($type='get',$param=[],$return='php'){
@@ -35,16 +35,20 @@ function lmh_curl($type='get',$param=[],$return='php'){
 // 该方法去对比资金流水的凭证日期的是否正确是否跟结算日期的区间是否一致 不一致的输出来
 //diffDate();
 function diffDate(){
-    $param['url'] = 'http://yundan.vkj56.cn/api/Table/Search/TradeRecordList?logid=12456601696558885697&gid=1000&btnLoadingTag=off';
-    $param['cookie'] = 'Order_tr_down_loading_list_124566=false; Order_tr_up_loading_list_124566=false; PHPSESSID=e7240330f3b450f3f3bcdd7886db2b03; Hm_lvt_f59ed1ad07a4a48a248b87fac4f62903=1695861094,1696379551,1696465827,1696552040; user_id=124566; group_id=1000; company_id=58510; Hm_lpvt_f59ed1ad07a4a48a248b87fac4f62903=1696557757; 124566%7C62044%7C1000%7ClastHandleTime=1696558885992';
+    $param['url'] = 'http://yundan.vkj56.cn/api/Table/Search/settleList?logid=12456601697248005941&gid=1000&btnLoadingTag=off';
+    $param['cookie'] = 'Order_tr_down_loading_list_124566=false; Order_tr_up_loading_list_124566=false; PHPSESSID=a8a3a528e263b30b087d10c49f90f2f7; Hm_lvt_f59ed1ad07a4a48a248b87fac4f62903=1696984529,1697070553,1697157144,1697243603; user_id=124566; group_id=1000; company_id=2; Hm_lpvt_f59ed1ad07a4a48a248b87fac4f62903=1697244442; 124566%7C62044%7C1000%7ClastHandleTime=1697245482500';
     $err_data = [];
-    for ($i=1;$i<=28;$i++){
+    for ($i=1;$i<=66;$i++){ // 不能查超过50000单
         $param['data']=[
 //            'req' =>'{"category":"Settle","tab":"detail","sort":{"create_time":"desc","serial_no":"desc","id":"desc"},"page_num":'.$i.',"page_size":1000,"cid":"","query":{"settle_category":[80]},"filter":{"settle_time":[[">=","2023-06-01 00:00:00"],["<=","2023-06-30 23:59:59"]]},"fetch_mode":"body"}'
-            'req' =>'{"category":"TradeRecord","tab":"vir_com_tr","sort":{"create_time":"desc","trade_id":"desc"},"page_num":'.$i.',"page_size":1000,"cid":"73067e693dac1586773c349fa93a5d65","query":{},"filter":{"create_time":[[">=","2023-09-01 00:00:00"],["<=","2023-09-15 23:59:59"]]},"fetch_mode":"body"}'
+            'req' =>'{"category":"Settle","tab":"detail","sort":{"create_time":"desc","serial_no":"desc","id":"desc"},"page_num":'.$i.',"page_size":500,"cid":"73067e693dac1586773c349fa93a5d65","query":{"company_id":[60221,59644,58234,57872,57714,57688,57244,57107,57099,57015]},"filter":{},"fetch_mode":"body"}'
         ];
         $data = lmh_curl('post',$param);
         $data = $data['res']['data'];
+        if (!is_array($data)) {
+            jdd($data);
+        }
+        echo count($data). '  ';
         echo $i."\n";
 //        foreach ($data as $v){
 ////            if(strtotime($v['Accounts|doc_date']) > strtotime('2023-07-01 00:00:00') || strtotime($v['Accounts|doc_date']) < strtotime('2023-06-01 00:00:00')){
@@ -52,11 +56,20 @@ function diffDate(){
 ////            }
 ////            jdd($err_data);
 //        }
-            $err_data = array_merge($err_data,array_column($data, 'now_order_num'));
+        $ids = implode(',', array_column($data, 'bill_id'));
+        if (empty($ids)) {
+            break;
+        }
+//        if ($i !== 1) {
+            $ids = ','.$ids;
+//        }
+        file_put_contents(__DIR__.'\tmp.txt', $ids, FILE_APPEND);
+//            $err_data = array_merge($err_data,array_column($data, 'now_order_num'));
 //        echo json_encode($err_data,true)."\n";
     }
-            $ids = implode(',', $err_data);
-            file_put_contents(__DIR__.'\tmp.txt', $ids, FILE_APPEND);
+//            $ids = implode(',', $err_data);
+//            file_put_contents(__DIR__.'\tmp.txt', $ids);
+//            file_put_contents(__DIR__.'\tmp.txt', $ids, FILE_APPEND);
 }
 
 
@@ -112,4 +125,13 @@ function test() {
     file_put_contents(__DIR__.'\tmp.txt', $ids);
     echo number_format(memory_get_usage()/1024/1024,2) . 'mb'.PHP_EOL;
 }
-test();
+//test();
+
+getCount();
+function getCount() {
+    $data = file_get_contents(__DIR__.'\tmp.txt');
+//    $data = file_get_contents('C:\Users\Administrator\Documents\Fax\索引\ac_apply.txt');
+    $data = explode(',',$data);
+//    echo count(array_unique($data));
+    echo count($data);
+}

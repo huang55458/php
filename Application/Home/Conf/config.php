@@ -25,4 +25,25 @@ return array(
 //    'LOG_RECORD' => true, // 开启日志记录
 //    'LOG_FORMAT' => '[%s][%s] %s', // 设置日志格式
     'LOG_FILE_SIZE' => 209715200,
+
+    'sanzhi_rw'              => [
+        'DB_TYPE'  => 'mysqli',
+//        'DB_HOST'  => '',
+        'DB_HOST'  => '127.0.0.1', //可以xshell 的隧道，拨出
+        'DB_NAME'  => '',
+        'DB_USER'  => '',
+        'DB_PWD'   => '',
+        'DB_PORT'  => 30000,
+        'DB_DEBUG' => false,
+    ],
+    'sanzhi_r'              => [
+        'DB_TYPE'  => 'mysqli',
+//        'DB_HOST'  => '',
+        'DB_HOST'  => '127.0.0.1', //可以xshell 的隧道，拨出
+        'DB_NAME'  => '',
+        'DB_USER'  => '',
+        'DB_PWD'   => '',
+        'DB_PORT'  => 30000,
+        'DB_DEBUG' => false,
+    ],
 );

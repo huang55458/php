@@ -1,6 +1,6 @@
 <?php
 
-require_once './Application/Home/Common/function.php';
+require_once '../Application/Home/Common/function.php';
 
 $txt = file_get_contents('C:\Users\Administrator\Documents\1.json');
 $json = json_decode($txt, true);

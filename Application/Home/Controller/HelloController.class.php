@@ -1,6 +1,7 @@
 <?php
 namespace Home\Controller;
 
+use mysqli;
 use Think\Controller;
 
 class HelloController extends Controller
@@ -98,6 +99,24 @@ class HelloController extends Controller
     }
 
     public function test() {
-        echo "this is a test";
+        ini_set("memory_limit", "4024M");
+        $select = M('customer','','sanzhi_r');
+        $insert = M('customer');
+        $sql = "id > 241050778 and species = 2 and status = 1 and address != '' and address != '{\"show_val\":\"\"}' and address != '{\"show_val\":\"\",\"province\":\"\",\"city\":\"\",\"district\":\"\",\"adcode\":\"\",\"poi\":\"\"}' and create_time < '2023-01-01 00:00:00' and group_id = 1000 and address != '{\"province\":\"\",\"city\":\"\",\"district\":\"\",\"adcode\":\"\",\"poi\":\"\",\"street\":\"\",\"show_val\":\"\"}'";
+        $res = $select->where($sql)->limit(2000)->field('id,address,address_remark')->order('id')->select();
+
+        if (empty($res)) die("empty".PHP_EOL);
+        do {
+            $insert->addAll($res);
+
+            $customer = array_pop($res);
+            $sql = "species = 2 and status = 1 and address != '' and address != '{\"show_val\":\"\"}' and address != '{\"show_val\":\"\",\"province\":\"\",\"city\":\"\",\"district\":\"\",\"adcode\":\"\",\"poi\":\"\"}' and create_time < '2023-01-01 00:00:00' and group_id = 1000 and address != '{\"province\":\"\",\"city\":\"\",\"district\":\"\",\"adcode\":\"\",\"poi\":\"\",\"street\":\"\",\"show_val\":\"\"}'";
+
+            $str = ' and id > ' .$customer['id'];
+            $sql .= $str;
+            $res = $select->where($sql)->limit(2000)->field('id,address,address_remark')->order('id')->select();
+        } while (!empty($res));
+//        jdd(M()->getLastSql());
+        jdd('success');
     }
 }

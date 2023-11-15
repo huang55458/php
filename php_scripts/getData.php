@@ -34,29 +34,54 @@ function lmh_curl($type='get',$param=[],$return='php'){
 // 该方法去对比资金流水的凭证日期的是否正确是否跟结算日期的区间是否一致 不一致的输出来
 diffDate();
 function diffDate(){
-    $param['url'] = 'http://yundan.vkj56.cn/api/Table/Search/batchList?logid=12456601695257751553&gid=1000&btnLoadingTag=off';
-    $param['cookie'] = 'Order_tr_down_loading_list_124566=false; Order_tr_up_loading_list_124566=false; PHPSESSID=37a25b07d79e01be33356f5ca8e019a6; Hm_lvt_f59ed1ad07a4a48a248b87fac4f62903=1694997046,1695083525,1695169614,1695256348; user_id=124566; group_id=1000; company_id=61734; Hm_lpvt_f59ed1ad07a4a48a248b87fac4f62903=1695260013; 124566%7C62044%7C1000%7ClastHandleTime=1695260327683';
+    ini_set('memory_limit','4000M');
+    $param['url'] = 'http://yundan.vkj56.cn/api/Table/Search/settleList?logid=12456601699082600687&gid=1000&btnLoadingTag=off';
+    $param['cookie'] = 'Order_tr_down_loading_list_124566=false; Order_tr_up_loading_list_124566=false; PHPSESSID=a8ea0d67f33dc9c11c7462187bcf0901; Hm_lvt_f59ed1ad07a4a48a248b87fac4f62903=1698798757,1698885197,1698973854,1699058019; user_id=124566; group_id=1000; company_id=26751; Hm_lpvt_f59ed1ad07a4a48a248b87fac4f62903=1699079258; 124566%7C62044%7C1000%7ClastHandleTime=1699080053784';
     $err_data = [];
-    for ($i=1;$i<=1;$i++){
+    for ($i=1;$i<=31;$i++){
+
+        $start_time = date('Y-m-d H:i:s', mktime(0, 0, 0, 10, $i, 2023));
+        $end_time = date('Y-m-d H:i:s', mktime(23, 59, 59, 10, $i, 2023));
         $param['data']=[
-            'req' =>'{"category":"Batch","tab":"payment_batch_start","sort":{"b_link_id":"desc"},"page_num":1,"page_size":1000,"type":"payment_batch_start","cid":"73067e693dac1586773c349fa93a5d65","query":{"company_id":["61571","61572","59779","60268","60045","59448"]},"filter":{},"fetch_mode":"body"}'
+//            'req' =>'{"category":"Settle","tab":"list","sort":{"create_time":"desc","id":"desc"},"page_num":1,"page_size":2000,"cid":"73067e693dac1586773c349fa93a5d65","query":{"pay_mode":"平台账户"},"filter":{"settle_time":[[">=","'.$start_time.'"],["<=","'.$end_time.'"]]},"fetch_mode":"body"}'
+            'req' =>'{"category":"Settle","tab":"detail","sort":{"create_time":"desc","serial_no":"desc","id":"desc"},"page_num":1,"page_size":2000,"cid":"73067e693dac1586773c349fa93a5d65","query":{"settle_category":[80]},"filter":{"settle_time":[[">=","'.$start_time.'"],["<=","'.$end_time.'"]]},"fetch_mode":"body"}'
+//            'req' =>'{"category":"Accounts","tab":"doc","sort":{"doc_date":"desc","create_time":"desc"},"page_num":1,"page_size":10000,"cid":"73067e693dac1586773c349fa93a5d65","query":{},"filter":{"doc_date":[[">=","'.$start_time.'"],["<=","'.$end_time.'"]]},"fetch_mode":"body"}'
 //            'req' =>''
         ];
         $data = lmh_curl('post',$param);
+        $count = $data['res']['total']['count'];
+        echo $count."\n";
         $data = $data['res']['data'];
-//        echo $i."\n";
+        if ($count > 2000) {
+            $ff = getData($count,$param,$start_time,$end_time);
+            $data = array_merge($data,$ff);
+        }
+        echo count($data)."ffff\n";
+        foreach ($data as $v){
+//                jdd($v);
+            if (!empty($v['Accounts|doc_date'])) {
+                if (strtotime($v['Accounts|doc_date']) > strtotime('2023-11-01 00:00:00') || strtotime($v['Accounts|doc_date']) < strtotime('2023-10-01 00:00:00')) {
+                    echo $v['cert_no'] . "\n";
+                    $err_data[] = $v['cert_no'];
+                }
+            }
+        }
+        echo $i."\n";
 //        foreach ($data as $v){
 //            if(strtotime($v['Accounts|doc_date']) > strtotime('2023-07-01 00:00:00') || strtotime($v['Accounts|doc_date']) < strtotime('2023-06-01 00:00:00')){
 //                $err_data[]=$v;
 //            }
 //        }
 //        jdd($data);
-        $err_data = array_column($data, 'b_basic_id');
-        $err_data = array_map('intval', $err_data);
-        jdd($err_data);
-        $ids = implode(',', $err_data);
-        file_put_contents(__DIR__.'\tmp.txt', $ids);
+//        $err_data[] = array_column($data, 'cert_no');
+//        $err_data = array_map('intval', $err_data);
+//        jdd($err_data);
     }
+//    $arr = array_merge(...$err_data);
+    file_put_contents(__DIR__.'\tmp.txt',implode(',',$err_data));
+//    $ids = file_get_contents(__DIR__.'\tmp.txt');
+//    $ids = explode(',',$ids);
+//    jdd(array_diff($ids,$arr));
 }
 
 //如何上方法凭证日期没有错误 则通过自己没有去资金流水明细和 分录列表
@@ -92,3 +117,20 @@ function sum_settle_amount(){
 }
 //$data = sum_settle_amount();
 //echo json_encode($data,true)."\n";
+//$id1 = explode(',',file_get_contents(__DIR__.'\tmp.txt'));
+//$id2 = explode(',',file_get_contents(__DIR__.'\tmp2.txt'));
+//jdd(array_filter(array_values(array_diff($id2,$id1))));
+
+function getData($count,$param,$start_time,$end_time) {
+    $d = array();
+    $i = ceil($count / 2000);
+    for ($j = 2; $j <= $i; $j++){
+        $param['data']['req'] = '{"category":"Settle","tab":"detail","sort":{"create_time":"desc","serial_no":"desc","id":"desc"},"page_num":'.$j.',"page_size":2000,"cid":"73067e693dac1586773c349fa93a5d65","query":{"settle_category":[80]},"filter":{"settle_time":[[">=","'.$start_time.'"],["<=","'.$end_time.'"]]},"fetch_mode":"body"}';
+
+        $data = lmh_curl('post',$param);
+        $data = $data['res']['data'];
+        $d[] = $data;
+    }
+    return array_merge(...$d);
+}
+

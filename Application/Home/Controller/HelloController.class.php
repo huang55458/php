@@ -119,4 +119,77 @@ class HelloController extends Controller
 //        jdd(M()->getLastSql());
         jdd('success');
     }
+
+    /**
+     * 直接保存为xls文件，数值类型会有显示问题
+     * 保存TXT文件，用excel的从外部文件导入数据处理
+     * @return void
+     */
+    public function test1() {
+        ini_set("memory_limit", "4024M");
+        ini_set("max_execution_time", "30000");
+        $limit = 2000;
+        $database = 'sanzhi_r';
+        $driver = M('driver_company','',$database);
+        $company = M('company','',$database);
+        $use_corp_dict = [
+            1 => '本级组织',
+            2 => '本级及下级',
+            3 => '本级及下级所有自营组织',
+            4 => '本级及下级所有加盟组织',
+            5 => '全集团',
+        ];
+        $gender = [
+            1 => '男',
+            2 => '女',
+        ];
+        $sql = "group_id = 1000 and `status` = 1";
+        $res = $driver->where($sql)->limit($limit)->field('id,company_id,use_corp_type,name,tel,id_num,sex,ext,remark')->order('id')->select();
+        $company_ids = array_column($res, 'company_id');
+        $company_infos = [];
+        if (!empty($company_ids)) {
+            $company_infos = $company->where(['id' => ['in', $company_ids]])->limit($limit)->field('id,short_name')->select();
+        }
+        $company_infos = array_column($company_infos, null , 'id');
+        $title = "所属组织\t使用组织\t司机姓名\t司机手机号\t身份证号\t性别\t收货客户手机号\t备注\t\n";
+        $file_name = '11-27.txt';
+        $F = file_put_contents(__DIR__.DIRECTORY_SEPARATOR.$file_name,$title);
+        if (empty($res)) die("empty".PHP_EOL);
+        do {
+            $str = '';
+            foreach ($res as $value) {
+                if (empty($value['ext'])) {
+                    continue;
+                }
+                $ext = json_decode($value['ext'], true);
+                if (!isset($ext['cee_mobile']) && empty(array_filter($ext['cee_mobile']))) {
+                    continue;
+                }
+                $cee_mobile = implode(',', $ext['cee_mobile']);
+
+                if (empty($cee_mobile)) {
+                    continue;
+                }
+//                $cee_mobile = "'".$cee_mobile."'";
+//                $value['id_num'] = "'".$value['id_num']."'";
+//                $value['tel'] = "'".$value['tel']."'";
+
+                $str .= "{$company_infos[$value['company_id']]['short_name']}\t{$use_corp_dict[$value['use_corp_type']]}\t{$value['name']}\t{$value['tel']}\t{$value['id_num']}\t{$gender[$value['sex']]}\t{$cee_mobile}\t{$value['remark']}\t\n";
+
+            }
+            if (!empty($str)) {
+                file_put_contents(__DIR__ . DIRECTORY_SEPARATOR . $file_name, $str, FILE_APPEND);
+            }
+            $customer = array_pop($res);
+            $sql = "group_id = 1000 and `status` = 1";
+
+            $str = ' and id > ' .$customer['id'];
+            $sql .= $str;
+            $res = $driver->where($sql)->limit($limit)->field('id,company_id,use_corp_type,name,tel,id_num,sex,ext,remark')->order('id')->select();
+            $company_ids = array_column($res, 'company_id');
+            $company_infos = $company->where(['id' => ['in',$company_ids]])->limit($limit)->field('id,short_name')->select();
+            $company_infos = array_column($company_infos, null , 'id');
+        } while (!empty($res));
+        jdd('success');
+    }
 }
